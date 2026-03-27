@@ -14,14 +14,15 @@ export function useMetrics(serverId: string) {
       .then((r) => r.json())
       .then((data: Metric[]) => setMetrics(data));
 
-    // Subscribe to live updates
+    // Subscribe to live updates using named handler for correct cleanup
     const socket = getSocket();
-    socket.on('metric:update', (metric: Metric) => {
+    const handler = (metric: Metric) => {
       if (metric.serverId !== serverId) return;
       setMetrics((prev) => [...prev.slice(-MAX_POINTS + 1), metric]);
-    });
+    };
+    socket.on('metric:update', handler);
 
-    return () => { socket.off('metric:update'); };
+    return () => { socket.off('metric:update', handler); };
   }, [serverId]);
 
   return metrics;
