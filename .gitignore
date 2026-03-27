@@ -3,3 +3,8 @@ dist/
 .env
 .turbo/
 *.log
+.env.*
+*.tsbuildinfo
+coverage/
+.DS_Store
+Thumbs.db
