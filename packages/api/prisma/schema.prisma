@@ -27,3 +27,23 @@ model Metric {
 
   @@index([serverId, timestamp])
 }
+
+model UptimeCheck {
+  id        String     @id @default(cuid())
+  name      String
+  type      String
+  target    String
+  interval  Int        @default(60)
+  createdAt DateTime   @default(now())
+  incidents Incident[]
+}
+
+model Incident {
+  id         String      @id @default(cuid())
+  checkId    String
+  check      UptimeCheck @relation(fields: [checkId], references: [id])
+  startedAt  DateTime    @default(now())
+  resolvedAt DateTime?
+
+  @@index([checkId, resolvedAt])
+}
