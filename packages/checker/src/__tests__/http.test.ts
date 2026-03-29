@@ -22,6 +22,7 @@ describe('checkHttp', () => {
     fetchSpy.mockResolvedValueOnce({ ok: false, status: 500 } as Response);
     const result = await checkHttp('https://example.com');
     expect(result.success).toBe(false);
+    expect(result.latencyMs).toBeGreaterThanOrEqual(0);
   });
 
   it('returns success=false and latencyMs=0 when fetch throws', async () => {
