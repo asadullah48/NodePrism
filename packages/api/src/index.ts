@@ -5,6 +5,7 @@ import http from 'http';
 import { initSocket } from './lib/socket';
 import { serversRouter } from './routes/servers';
 import { metricsRouter } from './routes/metrics';
+import { checksRouter } from './routes/checks';
 
 const app = express();
 const server = http.createServer(app);
@@ -16,6 +17,7 @@ app.use(express.json());
 
 app.use('/api/servers', serversRouter);
 app.use('/api/metrics', metricsRouter);
+app.use('/api/checks', checksRouter);
 
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 
