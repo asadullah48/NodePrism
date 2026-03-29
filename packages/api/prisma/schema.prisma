@@ -28,10 +28,15 @@ model Metric {
   @@index([serverId, timestamp])
 }
 
+enum CheckType {
+  http
+  tcp
+}
+
 model UptimeCheck {
   id        String     @id @default(cuid())
   name      String
-  type      String
+  type      CheckType
   target    String
   interval  Int        @default(60)
   createdAt DateTime   @default(now())
@@ -41,7 +46,7 @@ model UptimeCheck {
 model Incident {
   id         String      @id @default(cuid())
   checkId    String
-  check      UptimeCheck @relation(fields: [checkId], references: [id])
+  check      UptimeCheck @relation(fields: [checkId], references: [id], onDelete: Cascade)
   startedAt  DateTime    @default(now())
   resolvedAt DateTime?
 
