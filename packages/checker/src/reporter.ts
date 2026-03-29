@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { CheckResult } from './checks/http';
+import { CheckResult } from '@nodeprism/shared';
 
 export async function reportResult(
   apiUrl: string,

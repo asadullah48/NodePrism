@@ -17,11 +17,13 @@ export async function startRunner(apiUrl: string, secret: string): Promise<void>
   }
 
   if (checks.length === 0) {
-    console.log('No checks configured. Add checks via POST /api/checks');
+    console.log('No checks configured. Add checks via POST /api/checks, then restart the checker.');
     return;
   }
 
   console.log(`Loaded ${checks.length} check(s). Starting intervals...`);
+
+  const handles: NodeJS.Timeout[] = [];
 
   for (const check of checks) {
     const run = async () => {
@@ -40,6 +42,15 @@ export async function startRunner(apiUrl: string, secret: string): Promise<void>
 
     // Run immediately, then on interval
     run().catch(console.error);
-    setInterval(run, check.interval * 1000);
+    handles.push(setInterval(run, check.interval * 1000));
   }
+
+  const shutdown = () => {
+    console.log('Checker shutting down...');
+    handles.forEach(clearInterval);
+    process.exit(0);
+  };
+
+  process.once('SIGTERM', shutdown);
+  process.once('SIGINT', shutdown);
 }
