@@ -48,9 +48,8 @@ export interface UptimeCheckWithStatus extends UptimeCheck {
 }
 
 // Payload sent by the checker to POST /api/checks/:id/result.
-// `secret` is a shared auth token, not a check result field.
+// Auth is via Authorization: Bearer header, not in the body.
 export interface CheckResult {
   success: boolean;
   latencyMs: number;
-  secret: string;
 }

@@ -29,11 +29,10 @@ export const CreateUptimeCheckSchema = z.object({
 
 export type CreateUptimeCheckInput = z.infer<typeof CreateUptimeCheckSchema>;
 
-// Used by checker to POST ping results. `secret` is a shared auth token (not a result field).
+// Used by checker to POST ping results. Auth via Authorization: Bearer <secret> header.
 export const CheckResultSchema = z.object({
   success: z.boolean(),
   latencyMs: z.number().min(0),
-  secret: z.string().min(1),
 });
 
 export type CheckResultInput = z.infer<typeof CheckResultSchema>;

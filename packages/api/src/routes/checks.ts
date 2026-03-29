@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { timingSafeEqual } from 'crypto';
 import { prisma } from '../lib/prisma';
 import { CreateUptimeCheckSchema, CheckResultSchema } from '@nodeprism/shared';
 import { resolveIncidentAction } from '../lib/incidents';
@@ -56,7 +57,13 @@ checksRouter.post('/:id/result', async (req, res) => {
   if (!parsed.success) return res.status(400).json(parsed.error);
 
   const expectedSecret = process.env.CHECKER_SECRET;
-  if (!expectedSecret || parsed.data.secret !== expectedSecret) {
+  const authHeader = req.headers.authorization ?? '';
+  const providedSecret = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
+  const authorized =
+    !!expectedSecret &&
+    providedSecret.length === expectedSecret.length &&
+    timingSafeEqual(Buffer.from(providedSecret), Buffer.from(expectedSecret));
+  if (!authorized) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
