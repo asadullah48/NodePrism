@@ -18,22 +18,28 @@ export function checkTcp(target: string): Promise<CheckResult> {
     }
 
     const start = Date.now();
+    let settled = false;
     const socket = net.createConnection({ host, port });
+    socket.unref(); // Don't keep the event loop alive
+
+    const done = (result: CheckResult) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      socket.destroy();
+      resolve(result);
+    };
 
     const timer = setTimeout(() => {
-      socket.destroy();
-      resolve({ success: false, latencyMs: TCP_TIMEOUT_MS });
+      done({ success: false, latencyMs: Date.now() - start });
     }, TCP_TIMEOUT_MS);
 
     socket.on('connect', () => {
-      clearTimeout(timer);
-      socket.destroy();
-      resolve({ success: true, latencyMs: Date.now() - start });
+      done({ success: true, latencyMs: Date.now() - start });
     });
 
     socket.on('error', () => {
-      clearTimeout(timer);
-      resolve({ success: false, latencyMs: Date.now() - start });
+      done({ success: false, latencyMs: Date.now() - start });
     });
   });
 }
