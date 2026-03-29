@@ -9,7 +9,7 @@ const SERVER_ID = 'cmn9at38y0000o6wsd328esn2';
 
 export default function Dashboard() {
   const metrics = useMetrics(SERVER_ID);
-  const uptimeChecks = useUptimeChecks();
+  const { checks: uptimeChecks, loading: uptimeLoading } = useUptimeChecks();
   const latest = metrics[metrics.length - 1];
 
   return (
@@ -34,7 +34,7 @@ export default function Dashboard() {
       {/* Uptime Checks */}
       <div className="mt-8">
         <h2 className="text-lg font-semibold text-gray-700 mb-4">Uptime Checks</h2>
-        <UptimeChecks checks={uptimeChecks} />
+        <UptimeChecks checks={uptimeChecks} loading={uptimeLoading} />
       </div>
     </main>
   );

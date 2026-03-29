@@ -3,9 +3,14 @@ import { UptimeCheckWithStatus } from '@nodeprism/shared';
 
 interface Props {
   checks: UptimeCheckWithStatus[];
+  loading?: boolean;
 }
 
-export function UptimeChecks({ checks }: Props) {
+export function UptimeChecks({ checks, loading }: Props) {
+  if (loading) {
+    return <p className="text-sm text-gray-400">Loading uptime checks...</p>;
+  }
+
   if (checks.length === 0) {
     return (
       <p className="text-sm text-gray-400">
