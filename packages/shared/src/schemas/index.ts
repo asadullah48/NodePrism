@@ -19,3 +19,20 @@ export const CreateServerSchema = z.object({
 });
 
 export type CreateServerInput = z.infer<typeof CreateServerSchema>;
+
+export const CreateUptimeCheckSchema = z.object({
+  name: z.string().min(1),
+  type: z.enum(['http', 'tcp']),
+  target: z.string().min(1),
+  interval: z.number().int().min(10).max(3600).default(60),
+});
+
+export type CreateUptimeCheckInput = z.infer<typeof CreateUptimeCheckSchema>;
+
+export const CheckResultSchema = z.object({
+  success: z.boolean(),
+  latencyMs: z.number().min(0),
+  secret: z.string().min(1),
+});
+
+export type CheckResultInput = z.infer<typeof CheckResultSchema>;

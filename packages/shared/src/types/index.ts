@@ -26,3 +26,23 @@ export interface MetricPayload {
 export interface SocketEvents {
   'metric:update': (metric: Metric) => void;
 }
+
+export interface UptimeCheck {
+  id: string;
+  name: string;
+  type: 'http' | 'tcp';
+  target: string;       // URL for http, "host:port" for tcp
+  interval: number;     // seconds
+  createdAt: Date;
+}
+
+export interface Incident {
+  id: string;
+  checkId: string;
+  startedAt: Date;
+  resolvedAt: Date | null;
+}
+
+export interface UptimeCheckWithStatus extends UptimeCheck {
+  status: 'up' | 'down';
+}
