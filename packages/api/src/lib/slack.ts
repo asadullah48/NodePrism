@@ -1,9 +1,13 @@
 export async function sendSlackAlert(text: string): Promise<void> {
   const url = process.env.SLACK_WEBHOOK_URL;
   if (!url) return;
-  await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text }),
-  });
+  try {
+    await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }),
+    });
+  } catch {
+    // Best-effort: never let a Slack failure propagate
+  }
 }
