@@ -2,11 +2,14 @@
 import { useMetrics } from '../hooks/useMetrics';
 import { MetricsChart } from '../components/MetricsChart';
 import { StatCard } from '../components/StatCard';
+import { useUptimeChecks } from '../hooks/useUptimeChecks';
+import { UptimeChecks } from '../components/UptimeChecks';
 
 const SERVER_ID = 'cmn9at38y0000o6wsd328esn2';
 
 export default function Dashboard() {
   const metrics = useMetrics(SERVER_ID);
+  const uptimeChecks = useUptimeChecks();
   const latest = metrics[metrics.length - 1];
 
   return (
@@ -27,6 +30,11 @@ export default function Dashboard() {
         <MetricsChart metrics={metrics} dataKey="memory" color="#8b5cf6" label="Memory Usage %" />
         <MetricsChart metrics={metrics} dataKey="disk" color="#f97316" label="Disk Usage %" />
         <MetricsChart metrics={metrics} dataKey="network" color="#22c55e" label="Network (B/s)" />
+      </div>
+      {/* Uptime Checks */}
+      <div className="mt-8">
+        <h2 className="text-lg font-semibold text-gray-700 mb-4">Uptime Checks</h2>
+        <UptimeChecks checks={uptimeChecks} />
       </div>
     </main>
   );
