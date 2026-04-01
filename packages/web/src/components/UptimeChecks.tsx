@@ -5,7 +5,7 @@ import { useUptimeChecks } from '../hooks/useUptimeChecks';
 import { AddCheckModal } from './AddCheckModal';
 import { DeleteCheckModal } from './DeleteCheckModal';
 
-function uptimeColor(pct: number): string {
+function uptimeColor(pct: number = 100): string {
   if (pct >= 99) return 'text-green-600';
   if (pct >= 95) return 'text-amber-500';
   return 'text-red-500';
@@ -72,11 +72,11 @@ export function UptimeChecks() {
                   {check.type.toUpperCase()} · {check.target}
                 </p>
                 <p className="text-xs mt-1.5">
-                  <span className={uptimeColor(check.uptime24h)}>24h: {check.uptime24h.toFixed(1)}%</span>
+                  <span className={uptimeColor(check.uptime24h ?? 100)}>24h: {check.uptime24h?.toFixed(1) ?? '—'}%</span>
                   <span className="text-gray-300 mx-1">·</span>
-                  <span className={uptimeColor(check.uptime7d)}>7d: {check.uptime7d.toFixed(1)}%</span>
+                  <span className={uptimeColor(check.uptime7d ?? 100)}>7d: {check.uptime7d?.toFixed(1) ?? '—'}%</span>
                   <span className="text-gray-300 mx-1">·</span>
-                  <span className={uptimeColor(check.uptime30d)}>30d: {check.uptime30d.toFixed(1)}%</span>
+                  <span className={uptimeColor(check.uptime30d ?? 100)}>30d: {check.uptime30d?.toFixed(1) ?? '—'}%</span>
                 </p>
               </div>
               <div className="flex items-center gap-2">

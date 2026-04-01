@@ -26,6 +26,6 @@ export function computeUptime(
     }
   }
 
-  const uptime = Math.max(0, (effectiveMs - totalDowntimeMs) / effectiveMs * 100);
+  const uptime = Math.min(100, Math.max(0, (effectiveMs - totalDowntimeMs) / effectiveMs * 100));
   return Math.round(uptime * 10) / 10;
 }

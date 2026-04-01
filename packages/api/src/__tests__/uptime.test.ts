@@ -61,4 +61,18 @@ describe('computeUptime', () => {
     const windowStart = ago(MS_24H);
     expect(computeUptime(incidents, windowStart, NOW)).toBe(0);
   });
+
+  it('does not double-count overlapping incidents', () => {
+    // Two incidents: 8h ago to 4h ago, and 6h ago to 2h ago
+    // They overlap from 6h ago to 4h ago
+    // True union: 8h ago to 2h ago = 6h downtime in 24h window → 75% uptime
+    const incidents = [
+      { startedAt: ago(8 * 60 * 60 * 1000), resolvedAt: ago(4 * 60 * 60 * 1000) },
+      { startedAt: ago(6 * 60 * 60 * 1000), resolvedAt: ago(2 * 60 * 60 * 1000) },
+    ];
+    const windowStart = ago(MS_24H);
+    // effectiveMs = 24h, downtimeMs = 6h (merged: 8h ago → 2h ago) → 75% uptime
+    const result = computeUptime(incidents, windowStart, NOW);
+    expect(result).toBe(75);
+  });
 });
