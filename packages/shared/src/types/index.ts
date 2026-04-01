@@ -46,8 +46,8 @@ export interface Incident {
 export interface UptimeCheckWithStatus extends UptimeCheck {
   status: 'up' | 'down';
   uptime24h: number;  // 0–100, one decimal place
-  uptime7d: number;
-  uptime30d: number;
+  uptime7d: number;   // 0–100, one decimal place
+  uptime30d: number;  // 0–100, one decimal place
 }
 
 // Payload sent by the checker to POST /api/checks/:id/result.
