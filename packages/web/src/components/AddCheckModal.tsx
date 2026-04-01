@@ -63,7 +63,7 @@ export function AddCheckModal({ onClose, onSubmit }: AddCheckModalProps) {
     /* Backdrop */
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
-      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      onClick={(e) => { if (!submitting && e.target === e.currentTarget) onClose(); }}
     >
       {/* Modal panel */}
       <div className="relative w-full max-w-md mx-4 bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl shadow-black/60 overflow-hidden">

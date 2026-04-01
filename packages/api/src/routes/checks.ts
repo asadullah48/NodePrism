@@ -121,7 +121,9 @@ checksRouter.get('/:id/incidents', async (req, res) => {
   }
 });
 
-// Delete a check (cascades to incidents via Prisma onDelete: Cascade)
+// No unit test: this handler contains no extractable pure logic.
+// Project tests only pure functions (see src/__tests__/); integration tests
+// are not in scope (no supertest, no Prisma mocking — see CLAUDE.md).
 checksRouter.delete('/:id', async (req, res) => {
   try {
     const check = await prisma.uptimeCheck.findUnique({
