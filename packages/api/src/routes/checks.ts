@@ -4,31 +4,53 @@ import { prisma } from '../lib/prisma';
 import { CreateUptimeCheckSchema, CheckResultSchema } from '@nodeprism/shared';
 import { resolveIncidentAction } from '../lib/incidents';
 import { sendSlackAlert } from '../lib/slack';
+import { computeUptime } from '../lib/uptime';
 
 export const checksRouter = Router();
 
-// List all checks with current status
+const MS_24H = 24 * 60 * 60 * 1000;
+const MS_7D  =  7 * 24 * 60 * 60 * 1000;
+const MS_30D = 30 * 24 * 60 * 60 * 1000;
+
+// List all checks with current status and uptime stats
 checksRouter.get('/', async (_req, res) => {
   try {
+    const now = new Date();
+    const window30dStart = new Date(now.getTime() - MS_30D);
+
     const checks = await prisma.uptimeCheck.findMany({
       orderBy: { createdAt: 'desc' },
       include: {
         incidents: {
-          where: { resolvedAt: null },
-          take: 1,
+          where: {
+            startedAt: { lt: now },
+            OR: [
+              { resolvedAt: null },
+              { resolvedAt: { gt: window30dStart } },
+            ],
+          },
         },
       },
     });
 
-    const result = checks.map((c) => ({
-      id: c.id,
-      name: c.name,
-      type: c.type,
-      target: c.target,
-      interval: c.interval,
-      createdAt: c.createdAt,
-      status: c.incidents.length > 0 ? 'down' : 'up',
-    }));
+    const result = checks.map((c) => {
+      const windowStart24h = new Date(Math.max(now.getTime() - MS_24H, c.createdAt.getTime()));
+      const windowStart7d  = new Date(Math.max(now.getTime() - MS_7D,  c.createdAt.getTime()));
+      const windowStart30d = new Date(Math.max(now.getTime() - MS_30D, c.createdAt.getTime()));
+
+      return {
+        id: c.id,
+        name: c.name,
+        type: c.type,
+        target: c.target,
+        interval: c.interval,
+        createdAt: c.createdAt,
+        status: c.incidents.some((i) => i.resolvedAt === null) ? 'down' : 'up',
+        uptime24h: computeUptime(c.incidents, windowStart24h, now),
+        uptime7d:  computeUptime(c.incidents, windowStart7d,  now),
+        uptime30d: computeUptime(c.incidents, windowStart30d, now),
+      };
+    });
 
     res.json(result);
   } catch (err) {
