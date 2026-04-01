@@ -2,14 +2,12 @@
 import { useMetrics } from '../hooks/useMetrics';
 import { MetricsChart } from '../components/MetricsChart';
 import { StatCard } from '../components/StatCard';
-import { useUptimeChecks } from '../hooks/useUptimeChecks';
 import { UptimeChecks } from '../components/UptimeChecks';
 
 const SERVER_ID = 'cmn9at38y0000o6wsd328esn2';
 
 export default function Dashboard() {
   const metrics = useMetrics(SERVER_ID);
-  const { checks: uptimeChecks, loading: uptimeLoading } = useUptimeChecks();
   const latest = metrics[metrics.length - 1];
 
   return (
@@ -33,8 +31,7 @@ export default function Dashboard() {
       </div>
       {/* Uptime Checks */}
       <div className="mt-8">
-        <h2 className="text-lg font-semibold text-gray-700 mb-4">Uptime Checks</h2>
-        <UptimeChecks checks={uptimeChecks} loading={uptimeLoading} />
+        <UptimeChecks />
       </div>
     </main>
   );
