@@ -120,3 +120,19 @@ checksRouter.get('/:id/incidents', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+// Delete a check (cascades to incidents via Prisma onDelete: Cascade)
+checksRouter.delete('/:id', async (req, res) => {
+  try {
+    const check = await prisma.uptimeCheck.findUnique({
+      where: { id: req.params.id },
+    });
+    if (!check) return res.status(404).json({ error: 'Check not found' });
+
+    await prisma.uptimeCheck.delete({ where: { id: req.params.id } });
+    res.status(204).send();
+  } catch (err) {
+    console.error('DELETE /checks/:id error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
