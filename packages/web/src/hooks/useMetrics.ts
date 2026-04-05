@@ -9,6 +9,7 @@ export function useMetrics(serverId: string) {
   const [metrics, setMetrics] = useState<Metric[]>([]);
 
   useEffect(() => {
+    if (!serverId) return;
     // Load historical metrics
     fetch(`http://localhost:4000/api/metrics/${serverId}`)
       .then((r) => r.json())
