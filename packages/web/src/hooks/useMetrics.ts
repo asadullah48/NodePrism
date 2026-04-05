@@ -13,7 +13,8 @@ export function useMetrics(serverId: string) {
     // Load historical metrics
     fetch(`http://localhost:4000/api/metrics/${serverId}`)
       .then((r) => r.json())
-      .then((data: Metric[]) => setMetrics(data));
+      .then((data: unknown) => { if (Array.isArray(data)) setMetrics(data as Metric[]); })
+      .catch(console.error);
 
     // Subscribe to live updates using named handler for correct cleanup
     const socket = getSocket();

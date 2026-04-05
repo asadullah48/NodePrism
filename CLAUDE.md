@@ -42,6 +42,7 @@ cd D:\NodePrism\packages\web && npm run dev
 ```bash
 cd D:\NodePrism\packages\api     && npx jest --no-coverage   # 13 tests (incidents: 4, uptime: 7, slack: 2)
 cd D:\NodePrism\packages\checker && npx jest --no-coverage --testTimeout=10000  # 6 tests (http: 3, tcp: 3)
+cd D:\NodePrism\packages\agent   && npx jest --no-coverage   # 4 tests (register: 4)
 ```
 
 ## Environment Variables
