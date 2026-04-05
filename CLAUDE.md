@@ -1,6 +1,7 @@
 # NodePrism — Claude Code Context
 
 Full-stack server monitoring platform. Learn full-stack dev by building real features phase by phase.
+> See `AGENTS.md` for agent rules of engagement, TDD workflow, and safe/unsafe commands.
 
 ## Monorepo Layout
 
@@ -13,7 +14,8 @@ D:\NodePrism\
 │   ├── checker/    @nodeprism/checker — HTTP/TCP uptime checks, POSTs results to API
 │   └── web/        web               — Next.js 14 dashboard (port 3000)
 ├── infrastructure/docker/            — docker-compose.yml (postgres + redis)
-└── docs/plans/                       — phase implementation plans
+├── docs/plans/                       — phase implementation plans (agent instructions)
+└── docs/designs/                     — architecture design documents (human reading)
 ```
 
 ## Start Everything
@@ -38,8 +40,8 @@ cd D:\NodePrism\packages\web && npm run dev
 ## Run Tests
 
 ```bash
-cd D:\NodePrism\packages\api     && npx jest --no-coverage   # 6 tests
-cd D:\NodePrism\packages\checker && npx jest --no-coverage --testTimeout=10000  # 6 tests
+cd D:\NodePrism\packages\api     && npx jest --no-coverage   # 13 tests (incidents: 4, uptime: 7, slack: 2)
+cd D:\NodePrism\packages\checker && npx jest --no-coverage --testTimeout=10000  # 6 tests (http: 3, tcp: 3)
 ```
 
 ## Environment Variables
@@ -56,8 +58,8 @@ SLACK_WEBHOOK_URL=<optional — Slack incoming webhook for alerts>
 ### packages/agent/.env
 ```
 API_URL=http://localhost:4000
-SERVER_ID=cmn9at38y0000o6wsd328esn2
 INTERVAL_MS=5000
+# SERVER_NAME=My Custom Name   ← optional, defaults to os.hostname()
 ```
 
 ### packages/checker/.env
@@ -83,6 +85,7 @@ GET  /api/checks                     — list checks with live status (up|down)
 POST /api/checks                     — create check { name, type, target, interval }
 POST /api/checks/:id/result          — checker posts result (Authorization: Bearer <secret>)
 GET  /api/checks/:id/incidents       — incident history for a check
+DELETE /api/checks/:id             — delete a check (cascades to incidents)
 ```
 
 ## Database (Prisma + PostgreSQL)
@@ -124,7 +127,9 @@ Both packages must have the same `CHECKER_SECRET` value in their `.env`.
 
 - **Phase 1** — Live metrics dashboard (agent → API → Socket.IO → Recharts charts)
 - **Phase 2** — Uptime checks + Slack alerting (checker package, incidents, DOWN/UP webhooks)
-- **Phase 3** — TBD
+- **Phase 3a** — Check Management UI (add/delete checks, AddCheckModal, DeleteCheckModal)
+- **Phase 3b** — Historical SLA (24h/7d/30d uptime %, computeUptime pure function)
+- **Phase 4a** — Multi-server agent self-registration (in progress)
 
 ## Code Conventions
 
